@@ -5,7 +5,7 @@
 <a href=https://movie.douban.com/people/lingluoyanchen/collect title=movie target=_blank><i class=remixicon-movie-fill></i></a>
 <a href="https://music.163.com/#/my/m/music/playlist?id=97552201" title=music target=_blank><i class=remixicon-music-fill></i></a>
 <a href=https://twitter.com/DesperadoYan title=twitter target=_blank><i class=remixicon-twitter-fill></i></a>
-<a href=https://sanoon.me/index.xml type=application/rss+xml title=rss target=_blank><i class=remixicon-rss-fill></i></a></div></div></div></div><div class=content><div class=post_page><div class="post animated fadeInDown"><div class="post_title post_detail_title"><h2><a href=/posts/grep%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/>Linux grep 命令详解</a></h2><span class=date>2021.03.25</span></div><div class="post_content markdown"><p>grep 命令是 Linux 上查找符合指定格式内容的命令，能快速的在给定的文件中查找到符合要求的内容行并打印，多用于定位问题时使用。</p><p>测试文件</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ cat demo.text
+<a href=https://sanoon.me/index.xml type=application/rss+xml title=rss target=_blank><i class=remixicon-rss-fill></i></a></div></div></div></div><div class=content><div class=post_page><div class="post animated fadeInDown"><div class="post_title post_detail_title"><h2><a href=/posts/grep%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/>Linux grep 命令详解</a></h2><span class=date>2021.03.25</span></div><div class="post_content markdown"><p>grep 命令是 Linux 上查找符合指定格式内容的命令，能快速的在给定的文件中查找到符合要求的内容行并打印，多用于定位问题时使用。</p><p>测试文件</p><pre><code>$ cat demo.text
 大江东去，浪淘尽，千古风流人物。
 故垒西边，人道是：三国周郎赤壁。
 乱石穿空，惊涛拍岸，卷起千堆雪。
@@ -15,7 +15,7 @@
 羽扇纶巾，谈笑间、樯橹灰飞烟灭。
 故国神游，多情应笑我，早生华发。
 人生如梦，一尊还酹江月。
-</code></pre></div><p>查找指定内容</p><blockquote><p>通常格式为 <code>grep '要查找的字符串' 指定要查找的文件</code>， 打印出符合要求的行内容</p></blockquote><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ grep <span style=color:#e6db74>&#39;小乔&#39;</span> demo.txt
+</code></pre><p>查找指定内容</p><blockquote><p>通常格式为 <code>grep '要查找的字符串' 指定要查找的文件</code>， 打印出符合要求的行内容</p></blockquote><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ grep <span style=color:#e6db74>&#39;小乔&#39;</span> demo.txt
 遥想公瑾当年，小乔初嫁了，雄姿英发。
 </code></pre></div><p>查找指定内容下面 N 行</p><blockquote><p><code>grep -A 2 '要查找的字符串' 指定要查找的文件</code></p></blockquote><pre><code>$ grep -A 2 '小乔' demo.txt
 遥想公瑾当年，小乔初嫁了，雄姿英发。
