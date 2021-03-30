@@ -1,0 +1,76 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=pragma content="no-cache"><meta http-equiv=cache-control content="no-cache"><meta name=author content="Sanoon"><meta name=description content="在开发过程中有时需要在业务逻辑处理 Java Bean 时需要对部分属性做更新，每个属性都做 set 操作过于繁琐，可以利用反射来进行两个 Java Bean 的合并操作。"><meta name=keywords content="合并 Java Bean"><link rel=canonical href=https://sanoon.me/posts/%E5%90%88%E5%B9%B6JavaBean/><title>合并 Java Bean | Sanoon</title><link rel="shortcut icon" href=https://sanoon.me/images/favicon.ico><link rel=stylesheet href=https://sanoon.me/css/animate.min.css><link rel=stylesheet href=https://sanoon.me/css/remixicon.css><link rel=stylesheet href=https://sanoon.me/css/zozo.css><link rel=stylesheet href=https://sanoon.me/css/highlight.css><script data-ad-client=ca-pub-6765261154701378 async src=https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js></script></head><body><div class="main animated"><div class="nav_container animated fadeInDown"><div class=site_nav id=site_nav><ul><li><a href=/>首页</a></li><li><a href=/posts/>归档</a></li><li><a href=/whisper/>碎碎念</a></li><li><a href=/photo/>摄影</a></li><li><a href=/tags/>标签</a></li><li><a href=/about/>关于</a></li></ul></div><div class=menu_icon><a id=menu_icon><i class=remixicon-links-line></i></a></div></div><div class="header animated fadeInDown"><div class=site_title_container><div class=site_title><h1><a href=https://sanoon.me><span>Sanoon</span>
+<img src=https://cdn.jsdelivr.net/gh/scopor/cdn@1.0.3/logos.svg style=margin-top:-8px></a></h1></div><div class=description><p class=sub_title>Life with teacher Lemon.</p><div class=my_socials><a href=https://book.douban.com/people/lingluoyanchen/collect title=book target=_blank><i class=remixicon-book-fill></i></a>
+<a href=https://sanoon.me/photo/ title=camera target=_blank><i class=remixicon-camera-fill></i></a>
+<a href=https://github.com/scopor title=github target=_blank><i class=remixicon-github-fill></i></a>
+<a href=https://movie.douban.com/people/lingluoyanchen/collect title=movie target=_blank><i class=remixicon-movie-fill></i></a>
+<a href="https://music.163.com/#/my/m/music/playlist?id=97552201" title=music target=_blank><i class=remixicon-music-fill></i></a>
+<a href=https://twitter.com/DesperadoYan title=twitter target=_blank><i class=remixicon-twitter-fill></i></a>
+<a href=https://sanoon.me/index.xml type=application/rss+xml title=rss target=_blank><i class=remixicon-rss-fill></i></a></div></div></div></div><div class=content><div class=post_page><div class="post animated fadeInDown"><div class="post_title post_detail_title"><h2><a href=/posts/%E5%90%88%E5%B9%B6JavaBean/>合并 Java Bean</a></h2><span class=date>2021.03.30</span></div><div class="post_content markdown"><p>在开发过程中有时需要在业务逻辑处理 Java Bean 时需要对部分属性做更新，每个属性都做 set 操作过于繁琐，可以利用反射来进行两个 Java Bean 的合并操作。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#f92672>package</span> com.sanoon<span style=color:#f92672>;</span>
+
+<span style=color:#f92672>import</span> org.slf4j.Logger<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> org.slf4j.LoggerFactory<span style=color:#f92672>;</span>
+
+<span style=color:#f92672>import</span> java.lang.reflect.Field<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> java.lang.reflect.Modifier<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> java.security.AccessController<span style=color:#f92672>;</span>
+<span style=color:#f92672>import</span> java.security.PrivilegedAction<span style=color:#f92672>;</span>
+
+<span style=color:#75715e>/**
+</span><span style=color:#75715e> * 合并两个Java Bean的属性
+</span><span style=color:#75715e> *
+</span><span style=color:#75715e> * @author sanoon
+</span><span style=color:#75715e> */</span>
+<span style=color:#66d9ef>public</span> <span style=color:#66d9ef>final</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>CombineUtil</span> <span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> Logger LOGGER <span style=color:#f92672>=</span> LoggerFactory<span style=color:#f92672>.</span><span style=color:#a6e22e>getLogger</span><span style=color:#f92672>(</span>CombineUtil<span style=color:#f92672>.</span><span style=color:#a6e22e>class</span><span style=color:#f92672>);</span>
+
+    <span style=color:#66d9ef>private</span> <span style=color:#66d9ef>static</span> <span style=color:#66d9ef>final</span> String SERIAL_VERSION_UID <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;serialVersionUID&#34;</span><span style=color:#f92672>;</span>
+
+    <span style=color:#66d9ef>private</span> <span style=color:#a6e22e>CombineUtil</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+    <span style=color:#f92672>}</span>
+
+    <span style=color:#75715e>/**
+</span><span style=color:#75715e>     * sourceBean中的属性会覆盖目标bean
+</span><span style=color:#75715e>     * sourceBean属性有值，则替换目标bean的属性，返回被覆盖后的目标bean
+</span><span style=color:#75715e>     * sourceBean属性没有值，则保留目标bean的属性，返回被覆盖后的目标bean
+</span><span style=color:#75715e>     *
+</span><span style=color:#75715e>     * @param &lt;T&gt; Bean
+</span><span style=color:#75715e>     * @param sourceBean 新的bean
+</span><span style=color:#75715e>     * @param targetBean 被覆盖的目标bean
+</span><span style=color:#75715e>     */</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>static</span> <span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>combine</span><span style=color:#f92672>(</span>T sourceBean<span style=color:#f92672>,</span> T targetBean<span style=color:#f92672>)</span> <span style=color:#66d9ef>throws</span> IllegalAccessException <span style=color:#f92672>{</span>
+        Class<span style=color:#f92672>&lt;?&gt;</span> sourceBeanClass <span style=color:#f92672>=</span> sourceBean<span style=color:#f92672>.</span><span style=color:#a6e22e>getClass</span><span style=color:#f92672>();</span>
+        Class<span style=color:#f92672>&lt;?&gt;</span> targetBeanClass <span style=color:#f92672>=</span> targetBean<span style=color:#f92672>.</span><span style=color:#a6e22e>getClass</span><span style=color:#f92672>();</span>
+
+        Field<span style=color:#f92672>[]</span> sourceFields <span style=color:#f92672>=</span> sourceBeanClass<span style=color:#f92672>.</span><span style=color:#a6e22e>getDeclaredFields</span><span style=color:#f92672>();</span>
+        Field<span style=color:#f92672>[]</span> targetFields <span style=color:#f92672>=</span> targetBeanClass<span style=color:#f92672>.</span><span style=color:#a6e22e>getDeclaredFields</span><span style=color:#f92672>();</span>
+        <span style=color:#66d9ef>for</span> <span style=color:#f92672>(</span><span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> 0<span style=color:#f92672>;</span> i <span style=color:#f92672>&lt;</span> sourceFields<span style=color:#f92672>.</span><span style=color:#a6e22e>length</span><span style=color:#f92672>;</span> i<span style=color:#f92672>++)</span> <span style=color:#f92672>{</span>
+            Field sourceField <span style=color:#f92672>=</span> sourceFields<span style=color:#f92672>[</span>i<span style=color:#f92672>];</span>
+            <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>Modifier<span style=color:#f92672>.</span><span style=color:#a6e22e>isStatic</span><span style=color:#f92672>(</span>sourceField<span style=color:#f92672>.</span><span style=color:#a6e22e>getModifiers</span><span style=color:#f92672>()))</span> <span style=color:#f92672>{</span>
+                <span style=color:#66d9ef>continue</span><span style=color:#f92672>;</span>
+            <span style=color:#f92672>}</span>
+            Field targetField <span style=color:#f92672>=</span> targetFields<span style=color:#f92672>[</span>i<span style=color:#f92672>];</span>
+            <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>Modifier<span style=color:#f92672>.</span><span style=color:#a6e22e>isStatic</span><span style=color:#f92672>(</span>targetField<span style=color:#f92672>.</span><span style=color:#a6e22e>getModifiers</span><span style=color:#f92672>()))</span> <span style=color:#f92672>{</span>
+                <span style=color:#66d9ef>continue</span><span style=color:#f92672>;</span>
+            <span style=color:#f92672>}</span>
+            AccessController<span style=color:#f92672>.</span><span style=color:#a6e22e>doPrivileged</span><span style=color:#f92672>((</span>PrivilegedAction<span style=color:#f92672>&lt;</span>T<span style=color:#f92672>&gt;)</span> <span style=color:#f92672>()</span> <span style=color:#f92672>-&gt;</span> <span style=color:#f92672>{</span>
+                sourceField<span style=color:#f92672>.</span><span style=color:#a6e22e>setAccessible</span><span style=color:#f92672>(</span><span style=color:#66d9ef>true</span><span style=color:#f92672>);</span>
+                targetField<span style=color:#f92672>.</span><span style=color:#a6e22e>setAccessible</span><span style=color:#f92672>(</span><span style=color:#66d9ef>true</span><span style=color:#f92672>);</span>
+                <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>null</span><span style=color:#f92672>;</span>
+            <span style=color:#f92672>});</span>
+            <span style=color:#66d9ef>try</span> <span style=color:#f92672>{</span>
+                <span style=color:#66d9ef>if</span> <span style=color:#f92672>(</span>sourceField<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>sourceBean<span style=color:#f92672>)</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>null</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>!</span>SERIAL_VERSION_UID<span style=color:#f92672>.</span><span style=color:#a6e22e>equals</span><span style=color:#f92672>(</span>sourceField<span style=color:#f92672>.</span><span style=color:#a6e22e>getName</span><span style=color:#f92672>()))</span> <span style=color:#f92672>{</span>
+                    targetField<span style=color:#f92672>.</span><span style=color:#a6e22e>set</span><span style=color:#f92672>(</span>targetBean<span style=color:#f92672>,</span> sourceField<span style=color:#f92672>.</span><span style=color:#a6e22e>get</span><span style=color:#f92672>(</span>sourceBean<span style=color:#f92672>));</span>
+                <span style=color:#f92672>}</span>
+            <span style=color:#f92672>}</span> <span style=color:#66d9ef>catch</span> <span style=color:#f92672>(</span>IllegalArgumentException <span style=color:#f92672>|</span> IllegalAccessException e<span style=color:#f92672>)</span> <span style=color:#f92672>{</span>
+                LOGGER<span style=color:#f92672>.</span><span style=color:#a6e22e>error</span><span style=color:#f92672>(</span><span style=color:#e6db74>&#34;Merge bean failed, the reason is {}.&#34;</span><span style=color:#f92672>,</span> e<span style=color:#f92672>.</span><span style=color:#a6e22e>getMessage</span><span style=color:#f92672>());</span>
+                <span style=color:#66d9ef>throw</span> e<span style=color:#f92672>;</span>
+            <span style=color:#f92672>}</span>
+        <span style=color:#f92672>}</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
+</code></pre></div></div><div class=post_footer><div class=meta><div class=info><span class="field tags"><i class=remixicon-stack-line></i>
+<a href=https://sanoon.me/tags/%E5%90%88%E5%B9%B6-Java-Bean/>合并 Java Bean</a></span></div></div></div><div class=preAndNext style=margin-top:20px><span><font color=red>Prev: </font><a class=previous href=https://sanoon.me/posts/grep%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/>Linux grep 命令详解</a></span></div><script async src=https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js></script><ins class=adsbygoogle style=display:block data-ad-client=ca-pub-6765261154701378 data-ad-slot=8034548941 data-ad-format=auto data-full-width-responsive=true></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({})</script></div><div class=doc_comments><div class=comments_block_title>发表评论</div><div id=vcomments></div></div><link rel=stylesheet href=https://sanoon.me/css/comments.css><script src=//cdn1.lncld.net/static/js/3.0.4/av-min.js></script><script src=//unpkg.com/valine/dist/Valine.min.js></script><script type=text/javascript>new Valine({el:'#vcomments',appId:'OLqTxeg1gvrPJ1ACgxP00SRd-MdYXbMMI',appKey:'64y2gAzoOfgjrFS083wLDKsA',placeholder:' ',visitor:'true'})</script><img alt=今日诗词 src=https://v2.jinrishici.com/one.svg style="max-width:100%;display:block;margin:0 auto;padding-bottom:30px"></div></div><a id=back_to_top href=# class=back_to_top><span>△</span></a></div><footer class=footer><div class=powered_by><a href=https://zeuk.me>Designed by Zeuk,</a>
+<a href=http://www.gohugo.io/>Proudly published with Hugo</a></div><div class=footer_slogan><span>Copyright @ 2019 - 2021. Sanoon, Inc.</span>
+<span id=busuanzi_container_site_pv>已被喵了&nbsp;<span id=busuanzi_value_site_pv></span>&nbsp;次</span></div><div class=footer_slogan style=margin-top:-10px><span><a href=https://lemoniu.me>柠檬菇凉</a></span>
+<span><a href=https://books.halfrost.com/leetcode/>LeetCode</a></span>
+<span><a href=https://xinpianchang.com>新片场</a></span></div></footer><script src=https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js></script><script src=https://cdn.jsdelivr.net/gh/scopor/cdn@1.1.3/zozo.js></script><script src=https://cdn.jsdelivr.net/gh/scopor/cdn@1.1.3/highlight.pack.js></script><link href=https://cdn.jsdelivr.net/gh/scopor/cdn@1.1.1/fancybox.min.css rel=stylesheet><script src=https://cdn.jsdelivr.net/gh/scopor/cdn@1.1.3/fancybox.min.js></script><script>hljs.initHighlightingOnLoad()</script><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><script type=text/javascript async src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML">MathJax.Hub.Config({tex2jax:{inlineMath:[['$','$'],['\\(','\\)']],displayMath:[['$$','$$'],['[[',']]']],processEscapes:!0,processEnvironments:!0,skipTags:['script','noscript','style','textarea','pre'],TeX:{equationNumbers:{autoNumber:"AMS"},extensions:["AMSmath.js","AMSsymbols.js"]}}}),MathJax.Hub.Queue(function(){var b=MathJax.Hub.getAllJax(),a;for(a=0;a<b.length;a+=1)b[a].SourceElement().parentNode.className+=' has-jax'})</script><style>code.has-jax{font:inherit;font-size:100%;background:inherit;border:inherit;color:#515151}</style><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-163559575-1','auto'),ga('send','pageview'))</script><script async src=https://www.google-analytics.com/analytics.js></script></body></html>
