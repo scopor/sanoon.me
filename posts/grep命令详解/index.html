@@ -1,11 +1,11 @@
-<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=pragma content="no-cache"><meta http-equiv=cache-control content="no-cache"><meta name=author content="Sanoon"><meta name=description content="grep 命令是 Linux 上查找符合指定格式内容的命令，能快速的在给定的文件中查找到符合要求的内容行并打印，多用于定位问题时使用。"><meta name=keywords content="Linux grep 命令,grep 与或非"><link rel=canonical href=https://sanoon.me/posts/grep%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/><title>Linux grep 命令详解 | Sanoon</title><link rel="shortcut icon" href=https://sanoon.me/images/favicon.ico><link rel=stylesheet href=https://sanoon.me/css/animate.min.css><link rel=stylesheet href=https://sanoon.me/css/remixicon.css><link rel=stylesheet href=https://sanoon.me/css/zozo.css><link rel=stylesheet href=https://sanoon.me/css/highlight.css><script data-ad-client=ca-pub-6765261154701378 async src=https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js></script></head><body><div class="main animated"><div class="nav_container animated fadeInDown"><div class=site_nav id=site_nav><ul><li><a href=/>首页</a></li><li><a href=/posts/>归档</a></li><li><a href=/whisper/>碎碎念</a></li><li><a href=/photo/>摄影</a></li><li><a href=/tags/>标签</a></li><li><a href=/about/>关于</a></li></ul></div><div class=menu_icon><a id=menu_icon><i class=remixicon-links-line></i></a></div></div><div class="header animated fadeInDown"><div class=site_title_container><div class=site_title><h1><a href=https://sanoon.me><span>Sanoon</span>
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=pragma content="no-cache"><meta http-equiv=cache-control content="no-cache"><meta name=author content="Sanoon"><meta name=description content="grep 命令是 Linux 上一款强大的文本内容搜索命令，你可以使用它查找符合指定内容或者符合某个正则的命令，能快速的在给定的文件或者文件夹中找到符合要求的内容行并打印，多用于定位问题时使用。"><meta name=keywords content="Linux grep 命令详解,grep 文本查找,"><link rel=canonical href=https://sanoon.me/posts/grep%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/><title>Linux grep 命令详解 | Sanoon</title><link rel="shortcut icon" href=https://sanoon.me/images/favicon.ico><link rel=stylesheet href=https://sanoon.me/css/animate.min.css><link rel=stylesheet href=https://sanoon.me/css/remixicon.css><link rel=stylesheet href=https://sanoon.me/css/zozo.css><link rel=stylesheet href=https://sanoon.me/css/highlight.css><script data-ad-client=ca-pub-6765261154701378 async src=https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js></script></head><body><div class="main animated"><div class="nav_container animated fadeInDown"><div class=site_nav id=site_nav><ul><li><a href=/>首页</a></li><li><a href=/posts/>归档</a></li><li><a href=/whisper/>碎碎念</a></li><li><a href=/photo/>摄影</a></li><li><a href=/tags/>标签</a></li><li><a href=/about/>关于</a></li></ul></div><div class=menu_icon><a id=menu_icon><i class=remixicon-links-line></i></a></div></div><div class="header animated fadeInDown"><div class=site_title_container><div class=site_title><h1><a href=https://sanoon.me><span>Sanoon</span>
 <img src=https://cdn.jsdelivr.net/gh/scopor/cdn@1.0.3/logos.svg style=margin-top:-8px></a></h1></div><div class=description><p class=sub_title>Life with teacher Lemon.</p><div class=my_socials><a href=https://book.douban.com/people/lingluoyanchen/collect title=book target=_blank><i class=remixicon-book-fill></i></a>
 <a href=https://sanoon.me/photo/ title=camera target=_blank><i class=remixicon-camera-fill></i></a>
 <a href=https://github.com/scopor title=github target=_blank><i class=remixicon-github-fill></i></a>
 <a href=https://movie.douban.com/people/lingluoyanchen/collect title=movie target=_blank><i class=remixicon-movie-fill></i></a>
 <a href="https://music.163.com/#/my/m/music/playlist?id=97552201" title=music target=_blank><i class=remixicon-music-fill></i></a>
 <a href=https://twitter.com/DesperadoYan title=twitter target=_blank><i class=remixicon-twitter-fill></i></a>
-<a href=https://sanoon.me/index.xml type=application/rss+xml title=rss target=_blank><i class=remixicon-rss-fill></i></a></div></div></div></div><div class=content><div class=post_page><div class="post animated fadeInDown"><div class="post_title post_detail_title"><h2><a href=/posts/grep%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/>Linux grep 命令详解</a></h2><span class=date>2021.03.25</span></div><div class="post_content markdown"><p>grep 命令是 Linux 上查找符合指定格式内容的命令，能快速的在给定的文件中查找到符合要求的内容行并打印，多用于定位问题时使用。</p><p>测试文件</p><pre><code>$ cat demo.text
+<a href=https://sanoon.me/index.xml type=application/rss+xml title=rss target=_blank><i class=remixicon-rss-fill></i></a></div></div></div></div><div class=content><div class=post_page><div class="post animated fadeInDown"><div class="post_title post_detail_title"><h2><a href=/posts/grep%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/>Linux grep 命令详解</a></h2><span class=date>2021.03.25</span></div><div class="post_content markdown"><p>grep 命令是 Linux 上一款强大的文本内容搜索命令，你可以使用它查找符合指定内容或者符合某个正则的命令，能快速的在给定的文件或者文件夹中找到符合要求的内容行并打印，多用于定位问题时使用。</p><p>测试文件</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ cat demo.text
 大江东去，浪淘尽，千古风流人物。
 故垒西边，人道是：三国周郎赤壁。
 乱石穿空，惊涛拍岸，卷起千堆雪。
@@ -15,19 +15,19 @@
 羽扇纶巾，谈笑间、樯橹灰飞烟灭。
 故国神游，多情应笑我，早生华发。
 人生如梦，一尊还酹江月。
-</code></pre><p>查找指定内容</p><blockquote><p>通常格式为 <code>grep '要查找的字符串' 指定要查找的文件</code>， 打印出符合要求的行内容</p></blockquote><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ grep <span style=color:#e6db74>&#39;小乔&#39;</span> demo.txt
+</code></pre></div><p>查找指定内容</p><blockquote><p>通常格式为 <code>grep '要查找的字符串' 指定要查找的文件</code>， 打印出符合要求的行内容</p></blockquote><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ grep <span style=color:#e6db74>&#39;小乔&#39;</span> demo.txt
 遥想公瑾当年，小乔初嫁了，雄姿英发。
-</code></pre></div><p>查找指定内容下面 N 行</p><blockquote><p><code>grep -A 2 '要查找的字符串' 指定要查找的文件</code></p></blockquote><pre><code>$ grep -A 2 '小乔' demo.txt
+</code></pre></div><p>查找指定内容下面 N 行</p><blockquote><p><code>grep -A 2 '要查找的字符串' 指定要查找的文件</code></p></blockquote><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ grep -A <span style=color:#ae81ff>2</span> <span style=color:#e6db74>&#39;小乔&#39;</span> demo.txt
 遥想公瑾当年，小乔初嫁了，雄姿英发。
 羽扇纶巾，谈笑间、樯橹灰飞烟灭。
 故国神游，多情应笑我，早生华发。
-</code></pre><p>查找指定内容上下 N 行</p><blockquote><p><code>grep -C 2 '要查找的字符串' 指定要查找的文件</code></p></blockquote><pre><code>$ grep -C 2 '小乔' demo.txt
+</code></pre></div><p>查找指定内容上下 N 行</p><blockquote><p><code>grep -C 2 '要查找的字符串' 指定要查找的文件</code></p></blockquote><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ grep -C <span style=color:#ae81ff>2</span> <span style=color:#e6db74>&#39;小乔&#39;</span> demo.txt
 江山如画，一时多少豪杰。
 
 遥想公瑾当年，小乔初嫁了，雄姿英发。
 羽扇纶巾，谈笑间、樯橹灰飞烟灭。
 故国神游，多情应笑我，早生华发。
-</code></pre><p>查找不包含指定内容的行</p><blockquote><p><code>grep -v '要排除的内容' 指定要查找的文件</code></p></blockquote><pre><code>$ grep -v '小乔' demo.txt
+</code></pre></div><p>查找不包含指定内容的行</p><blockquote><p><code>grep -v '要排除的内容' 指定要查找的文件</code></p></blockquote><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ grep -v <span style=color:#e6db74>&#39;小乔&#39;</span> demo.txt
 大江东去，浪淘尽，千古风流人物。
 故垒西边，人道是：三国周郎赤壁。
 乱石穿空，惊涛拍岸，卷起千堆雪。
@@ -36,56 +36,56 @@
 羽扇纶巾，谈笑间、樯橹灰飞烟灭。
 故国神游，多情应笑我，早生华发。
 人生如梦，一尊还酹江月。
-</code></pre><p>查找包含指定内容 A 或者 B 的行</p><blockquote><p><code>grep -E 'A|B' 指定要查找的文件</code></p></blockquote><pre><code>$ grep -E '小乔|周郎' demo.txt
+</code></pre></div><p>查找包含指定内容 A 或者 B 的行</p><blockquote><p><code>grep -E 'A|B' 指定要查找的文件</code></p></blockquote><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ grep -E <span style=color:#e6db74>&#39;小乔|周郎&#39;</span> demo.txt
 故垒西边，人道是：三国周郎赤壁。
 遥想公瑾当年，小乔初嫁了，雄姿英发。
 
-# 同类命令 egrep 'A|B' file
-$ egrep '小乔|周郎' demo.txt
+<span style=color:#75715e># 同类命令 egrep &#39;A|B&#39; file</span>
+$ egrep <span style=color:#e6db74>&#39;小乔|周郎&#39;</span> demo.txt
 故垒西边，人道是：三国周郎赤壁。
 遥想公瑾当年，小乔初嫁了，雄姿英发。
 
-# 同类命令 awk '/A|B/' file
-$ awk '/小乔|周郎/' demo.txt
+<span style=color:#75715e># 同类命令 awk &#39;/A|B/&#39; file</span>
+$ awk <span style=color:#e6db74>&#39;/小乔|周郎/&#39;</span> demo.txt
 故垒西边，人道是：三国周郎赤壁。
 遥想公瑾当年，小乔初嫁了，雄姿英发。
-</code></pre><p>不区分大小写查找</p><blockquote><p><code>grep -i '要查找的字符串' 指定要查找的文件</code></p></blockquote><pre><code># 测试文件 demo2.txt
+</code></pre></div><p>不区分大小写查找</p><blockquote><p><code>grep -i '要查找的字符串' 指定要查找的文件</code></p></blockquote><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#75715e># 测试文件 demo2.txt</span>
 $ cat demo2.txt
 AbCd
 B
 c
 D
 
-# 测试大小写查找
-$ grep -i 'C' demo.txt
+<span style=color:#75715e># 测试大小写查找</span>
+$ grep -i <span style=color:#e6db74>&#39;C&#39;</span> demo.txt
 AbCd
 c
-</code></pre><p>搜索大招</p><blockquote><p><code>grep -r '要查找的字符串' 指定目录</code></p></blockquote><pre><code>$ grep -r '小乔' ./
+</code></pre></div><p>搜索大招</p><blockquote><p><code>grep -r '要查找的字符串' 指定目录</code></p></blockquote><pre><code>$ grep -r '小乔' ./
 ./demo.txt:遥想公瑾当年，小乔初嫁了，雄姿英发。
-</code></pre><p>其他</p><pre><code># 列出含有指定内容的文件的文件名
-$ grep -l '小乔' demo.txt demo2.txt
+</code></pre><p>其他</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#75715e># 列出含有指定内容的文件的文件名</span>
+$ grep -l <span style=color:#e6db74>&#39;小乔&#39;</span> demo.txt demo2.txt
 demo.txt
 
-# 列出不含有指定内容的文件的文件名
-$ grep -L '小乔' demo.txt demo2.txt
+<span style=color:#75715e># 列出不含有指定内容的文件的文件名</span>
+$ grep -L <span style=color:#e6db74>&#39;小乔&#39;</span> demo.txt demo2.txt
 demo2.txt
 
-# 列出行号
-$ grep -n '小乔' demo.txt
+<span style=color:#75715e># 列出行号</span>
+$ grep -n <span style=color:#e6db74>&#39;小乔&#39;</span> demo.txt
 6:遥想公瑾当年，小乔初嫁了，雄姿英发。
 
-# 匹配查找整个单词
-$ grep -w 'B' demo2.txt
+<span style=color:#75715e># 匹配查找整个单词</span>
+$ grep -w <span style=color:#e6db74>&#39;B&#39;</span> demo2.txt
 B
 
-# 打印匹配到的文件名和内容
-$ grep -H '小乔' demo.txt
+<span style=color:#75715e># 打印匹配到的文件名和内容</span>
+$ grep -H <span style=color:#e6db74>&#39;小乔&#39;</span> demo.txt
 demo.txt:遥想公瑾当年，小乔初嫁了，雄姿英发。
 
-# 统计包含指定内容的行数
-$ grep -c '小乔' demo.txt
-1
-</code></pre></div><div class=post_footer><div class=meta><div class=info><span class="field tags"><i class=remixicon-stack-line></i>
+<span style=color:#75715e># 统计包含指定内容的行数</span>
+$ grep -c <span style=color:#e6db74>&#39;小乔&#39;</span> demo.txt
+<span style=color:#ae81ff>1</span>
+</code></pre></div></div><div class=post_footer><div class=meta><div class=info><span class="field tags"><i class=remixicon-stack-line></i>
 <a href=https://sanoon.me/tags/grep/>grep</a>
 <a href=https://sanoon.me/tags/Linux/>Linux</a></span></div></div></div><div class=preAndNext style=margin-top:20px><span><font color=red>Prev: </font><a class=previous href=https://sanoon.me/posts/sort%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/>Linux sort 命令详解</a></span></div><script async src=https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js></script><ins class=adsbygoogle style=display:block data-ad-client=ca-pub-6765261154701378 data-ad-slot=8034548941 data-ad-format=auto data-full-width-responsive=true></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({})</script></div><div class=doc_comments><div class=comments_block_title>发表评论</div><div id=vcomments></div></div><link rel=stylesheet href=https://sanoon.me/css/comments.css><script src=//cdn1.lncld.net/static/js/3.0.4/av-min.js></script><script src=//unpkg.com/valine/dist/Valine.min.js></script><script type=text/javascript>new Valine({el:'#vcomments',appId:'OLqTxeg1gvrPJ1ACgxP00SRd-MdYXbMMI',appKey:'64y2gAzoOfgjrFS083wLDKsA',placeholder:' ',visitor:'true'})</script><img alt=今日诗词 src=https://v2.jinrishici.com/one.svg style="max-width:100%;display:block;margin:0 auto;padding-bottom:30px"></div></div><a id=back_to_top href=# class=back_to_top><span>△</span></a></div><footer class=footer><div class=powered_by><a href=https://zeuk.me>Designed by Zeuk,</a>
 <a href=http://www.gohugo.io/>Proudly published with Hugo</a></div><div class=footer_slogan><span>Copyright @ 2019 - 2021. Sanoon, Inc.</span>
