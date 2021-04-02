@@ -55,7 +55,7 @@ public class BootException {
     @ExceptionHandler(NoHandlerFoundException.class)
     public ApiResult handleNotFoundException(NoHandlerFoundException e) {
         LOGGER.error(&quot;{}.&quot;, e.getMessage());
-        return new ApiResult(404, &quot;Not Found&quot;, null);
+        return new ApiResult(404, &quot;Not Found&quot;);
     }
 }
 </code></pre><p>然后我们重新启动工程，再次访问不存在的接口时，可以看到现在返回的就是 404 的JSON格式消息。</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;code&#34;</span>:<span style=color:#ae81ff>404</span>,<span style=color:#f92672>&#34;msg&#34;</span>:<span style=color:#e6db74>&#34;Not Found&#34;</span>}
